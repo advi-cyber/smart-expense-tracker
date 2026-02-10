@@ -1,0 +1,97 @@
+# Smart Expense Tracker with Spending Analysis
+
+def add_expense():
+    amount = input("Enter amount: ")
+    category = input("Enter category (Food, Travel, Shopping, etc): ")
+    note = input("Enter a short note: ")
+
+    with open("expenses.txt", "a") as file:
+        file.write(f"{amount},{category},{note}\n")
+
+    print("Expense added successfully!\n")
+
+
+def view_expenses():
+    try:
+        with open("expenses.txt", "r") as file:
+            print("\n--- Your Expenses ---")
+            for line in file:
+                amount, category, note = line.strip().split(",")
+                print(f"₹{amount} | {category} | {note}")
+            print()
+    except:
+        print("No expenses found.\n")
+
+
+def total_expense():
+    total = 0
+    try:
+        with open("expenses.txt", "r") as file:
+            for line in file:
+                amount = float(line.split(",")[0])
+                total += amount
+        print(f"\nTotal Spent: ₹{total}\n")
+    except:
+        print("No expenses to calculate.\n")
+
+
+def analyze_expenses():
+    try:
+        data = {}
+        total = 0
+
+        with open("expenses.txt", "r") as file:
+            for line in file:
+                amount, category, note = line.strip().split(",")
+                amount = float(amount)
+
+                total += amount
+                if category in data:
+                    data[category] += amount
+                else:
+                    data[category] = amount
+
+        print("\n--- Spending Analysis ---")
+        for cat in data:
+            print(f"{cat}: ₹{data[cat]}")
+
+        max_category = max(data, key=data.get)
+        percent = (data[max_category] / total) * 100
+
+        print(f"\nYou spend the most on: {max_category}")
+
+        if percent > 40:
+            print("⚠️ Warning: You are overspending on", max_category)
+            print("Suggestion: Try reducing it by 10–20%")
+        else:
+            print("Good spending balance 👍")
+
+        print()
+
+    except:
+        print("No data available for analysis.\n")
+
+
+while True:
+    print("====== Smart Expense Tracker ======")
+    print("1. Add Expense")
+    print("2. View Expenses")
+    print("3. Total Expense")
+    print("4. Analyze Spending")
+    print("5. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        add_expense()
+    elif choice == "2":
+        view_expenses()
+    elif choice == "3":
+        total_expense()
+    elif choice == "4":
+        analyze_expenses()
+    elif choice == "5":
+        print("Goodbye!")
+        break
+    else:
+        print("Invalid choice\n")
